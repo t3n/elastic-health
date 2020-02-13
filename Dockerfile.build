@@ -1,0 +1,14 @@
+FROM golang:1.13-alpine AS build
+
+RUN apk add --update --no-cache ca-certificates git
+
+COPY . /go/src/github.com/t3n/elastic-health/
+
+RUN cd /go/src/github.com/t3n/elastic-health/ \
+    GO111MODULE=on CGO_ENABLED=0 go build -a -o build/elastic-health main.go
+
+
+FROM scratch
+COPY --from=build /go/src/github.com/t3n/elastic-health/build/elastic-health /usr/local/bin/elastic-health
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+ENTRYPOINT ["/usr/local/bin/elastic-health"]
