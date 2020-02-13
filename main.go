@@ -72,9 +72,8 @@ func getStatus(w http.ResponseWriter, r *http.Request) {
 
 	if status.Status == elasticStatus || status.Status == "green" {
 		w.WriteHeader(200)
-	} else {
-		w.WriteHeader(503)
-		log.Error().Msg("Elasticsearch is not at desired State. State:" + " " + status.Status + ". " + "Desired state:" + " " + elasticStatus)
+		return
 	}
 
+	w.WriteHeader(503)
 }
